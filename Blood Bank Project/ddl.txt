@@ -1,0 +1,231 @@
+-- User Table
+CREATE TABLE User (
+    UserID INT PRIMARY KEY auto_increment,
+    Password TEXT NOT NULL,
+    Email varchar(255) NOT NULL,
+    PhoneNumber INT,
+    UserType ENUM('Admin', 'Donor', 'Patient')
+);
+
+-- Admin Table
+CREATE TABLE Admin (
+    AdminID INT PRIMARY KEY auto_increment,
+    UserID INT,
+    First_Name varchar(60),
+    Last_Name varchar(60),
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
+
+-- Donor Table
+CREATE TABLE Donor (
+    DonorID INT PRIMARY KEY auto_increment,
+    UserID INT,
+    First_Name varchar(60),
+    Last_Name varchar(60),
+    Blood_Group varchar(10),
+    Last_Donation_Date Date,
+    Disease varchar(255),
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+); 
+
+
+
+-- BloodStock Table
+CREATE TABLE BloodStock (
+    BloodStockID INT PRIMARY KEY auto_increment,
+    BloodGroup VARCHAR(255),
+    Unit INT
+);
+
+-- DonationRequest Table
+CREATE TABLE DonationRequest (
+    DrequestID INT PRIMARY KEY auto_increment,
+    DonorID INT,
+    BloodGroup VARCHAR(10),
+    Unit INT,
+    Status ENUM('Pending', 'Approved', 'Rejected'),
+    AdminID INT,
+    disease varchar(255),
+    FOREIGN KEY (DonorID) REFERENCES Donor(DonorID),
+    FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
+);
+
+CREATE TABLE DonationHistory (
+    DrequestID INT PRIMARY KEY auto_increment,
+    DonorID INT,
+    BloodGroup VARCHAR(10),
+    Unit INT,
+    Status ENUM('Pending', 'Approved', 'Rejected'),
+    AdminID INT,
+    Donation_date date,
+    FOREIGN KEY (DonorID) REFERENCES Donor(DonorID),
+    FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
+);
+
+
+-- Patient Table
+CREATE TABLE Patient (
+    PatientID INT PRIMARY KEY auto_increment,
+    UserID INT,
+    First_Name varchar(60),
+    Last_Name varchar(60),
+    BloodGroup VARCHAR(10),
+    FOREIGN KEY (UserID) REFERENCES User(UserID)
+);
+
+
+-- BloodRequest Table
+CREATE TABLE BloodRequest (
+    BrequestID INT PRIMARY KEY auto_increment,
+    PatientID INT,
+    BloodGroup VARCHAR(255),
+    Unit INT,
+    Status ENUM('Pending', 'Approved', 'Rejected'),
+    AdminID INT,
+    FOREIGN KEY (PatientID) REFERENCES Patient(PatientID),
+    FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
+);
+
+-- History Table
+CREATE TABLE History (
+    HistoryID INT PRIMARY KEY auto_increment,
+    Action VARCHAR(255),
+    Timestamp DATETIME,
+    Type ENUM('BloodRequest', 'DonationRequest'),
+    AdminID INT,
+    FOREIGN KEY (AdminID) REFERENCES Admin(AdminID)
+);
+
+
+--Trigger 1
+
+DELIMITER //
+
+CREATE TRIGGER after_donation_request_update
+AFTER UPDATE ON donationrequest
+FOR EACH ROW
+BEGIN
+    IF NEW.Status = 'Approved' THEN
+        INSERT INTO donationhistory (DrequestID, DonorID, BloodGroup, Unit, Status, AdminID, Donation_date)
+        VALUES (NEW.DrequestID, NEW.DonorID, NEW.BloodGroup, NEW.Unit, NEW.Status, NEW.AdminID, CURRENT_DATE());
+    END IF;
+END //
+
+DELIMITER ;
+
+--Procedure 1
+
+DELIMITER //
+
+CREATE PROCEDURE update_bloodstock(IN p_id INT, IN p_subtract_amount INT, OUT p_message VARCHAR(255))
+BEGIN
+    DECLARE current_units INT;
+
+    -- Get current units
+    SELECT Unit INTO current_units FROM bloodstock WHERE BloodStockID = p_id;
+
+    -- Check if subtraction is valid
+    IF current_units - p_subtract_amount >= 0 THEN
+        -- Perform the update
+        UPDATE bloodstock SET Unit = current_units - p_subtract_amount WHERE BloodStockID = p_id;
+        SET p_message = 'Subtraction successful';
+    ELSE
+        SET p_message = 'Subtraction would result in negative units';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
+-- Trigger for history table afte update on donationrequest table
+CREATE TRIGGER after_donationrequest_history_update
+AFTER UPDATE
+ON donationrequest FOR EACH ROW
+
+BEGIN
+    IF NEW.status = 'Approved' OR NEW.status = 'Rejected' THEN
+        INSERT INTO history (Action, Timestamp, Type, AdminID)
+        VALUES (
+            CASE 
+                WHEN NEW.status = 'Approved' THEN 'Approved'
+                WHEN NEW.status = 'Rejected' THEN 'Rejected'
+            END,
+            NOW(), -- Assuming your database supports NOW() for the current timestamp
+            'DonationRequest',
+            NEW.AdminID
+        );
+    END IF;
+END //
+
+-- Trigger for history table afte update on bloodrequest table
+CREATE TRIGGER after_bloodrequest_history_update
+AFTER UPDATE
+ON bloodrequest FOR EACH ROW
+
+BEGIN
+    IF NEW.status = 'Approved' OR NEW.status = 'Rejected' THEN
+        INSERT INTO history (Action, Timestamp, Type, AdminID)
+        VALUES (
+            CASE 
+                WHEN NEW.status = 'Approved' THEN 'Approved'
+                WHEN NEW.status = 'Rejected' THEN 'Rejected'
+            END,
+            NOW(), -- Assuming your database supports NOW() for the current timestamp
+            'BloodRequest',
+            NEW.AdminID
+        );
+    END IF;
+END //
+
+DELIMITER ;
+
+
+
+--Auto increment value
+
+
+alter table user
+auto_increment = 10000;
+
+alter table admin
+auto_increment = 20000;
+
+alter table patient
+auto_increment = 30000;
+
+alter table donor
+auto_increment = 40000;
+
+alter table bloodrequest
+auto_increment = 50000;
+
+alter table bloodstock
+auto_increment = 60000;
+
+alter table donationhistory
+auto_increment = 70000;
+
+alter table donationrequest
+auto_increment = 80000;
+
+alter table history
+auto_increment = 90000;
+
+
+--Pre defined data
+
+insert into user(Password,Email,PhoneNumber,UserType) values('atif','atif@gmail.com', 123334, 'Admin');
+insert into user(Password,Email,PhoneNumber,UserType) values('muhammad','muhammad@gmail.com', 123213, 'Admin');
+
+insert into admin(UserID,First_Name,Last_Name) values(10000,'atif','ali');
+insert into admin(UserID,First_Name,Last_Name) values(10001,'muhammad','shahid');
+
+insert into bloodstock(BloodGroup,Unit) values('A+', 0);
+insert into bloodstock(BloodGroup,Unit) values('A-', 0);
+insert into bloodstock(BloodGroup,Unit) values('B+', 0);
+insert into bloodstock(BloodGroup,Unit) values('B-', 0);
+insert into bloodstock(BloodGroup,Unit) values('O+', 0);
+insert into bloodstock(BloodGroup,Unit) values('O-', 0);
+insert into bloodstock(BloodGroup,Unit) values('AB+', 0);
+insert into bloodstock(BloodGroup,Unit) values('AB-', 0);

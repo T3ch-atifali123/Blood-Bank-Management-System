@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Patient Page</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Patient</a>
+                    </li>
+                    <% if (status == "ok") { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/patientProfile">Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/logout">Logout</a>
+                    </li>
+                    <% } else { %>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/patientRegister">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/patientLogin">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/admin">Admin</a>
+                    </li>
+                    <% } %>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container my-5">
+        <div class="card" style="width: 100%;">
+            <div class="card-body">
+                <% if (status == "patientLoggedIn") { %>
+                <h5 class="card-title">Welcome <%= user.Email %></h5>
+                <p class="card-text">Blood Request Status: <%= requestStatus %></p>
+                <% } else { %>
+                <h5 class="card-title">Welcome Back</h5>
+                <% } %>
+                <h6 class="card-subtitle mb-2 text-body-secondary">Patient</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the
+                    card's content.</p>
+                <% if (status == "patientLoggedIn") { %>
+                <button class="btn btn-primary"><a href="/patientProfile" style="color:aliceblue; text-decoration:none">Profile</a></button>
+                <button class="btn btn-primary"><a href="/logout" style="color:aliceblue; text-decoration:none">Logout</a></button>
+                <% } else { %>
+                <button class="btn btn-primary"><a href="/patientLogin" style="color:aliceblue; text-decoration:none">Login</a></button>
+                <button class="btn btn-primary"><a href="/patientRegister" style="color:aliceblue; text-decoration:none">Register</a></button>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,169 @@
+/* css reset  */
+*{
+    margin : 0;
+    padding : 0; 
+}
+
+/* css variables */
+:root{
+    --navbar-height : 59px;
+}
+
+/* Navigation Bar  */
+
+/* Navigation Bar logo and image  */
+#logo {
+margin: 10px 34px;
+
+}
+#logo img {
+    height: 90px;
+    margin: 3px 6px;
+    padding-top: 16px
+}
+/* Navigation Bar list styling  */
+#navbar{
+    position: sticky;
+    display: flex;
+    align-items: center;
+    /* background: black; */
+    /* opacity: 0.1; */
+    height: 66px;
+}
+
+#navbar ul{
+    display: flex;
+}
+/* #navbar ::before{
+    content: "";
+    background-color: black;
+    position: absolute;
+    height: 100%;    
+    width:100%;
+    z-index: -1;
+    opacity: 0.4;
+} */
+#navbar ul li{
+    
+    list-style: none;
+    font-size: 1.3rem;
+}
+#navbar ul li a{
+color:#79031b;
+display: block;
+padding: 3px 22px;
+border-radius: 20px;
+text-decoration: none;
+font-family: 'Exo 2', sans-serif;
+}
+
+#navbar ul li a:hover{
+    color: white;
+    background-color:#79031b;
+}
+
+/* Home section  */
+
+/* #home{
+    display: flex;
+    flex-direction:column;
+    padding: 3px 100px;
+    justify-content: left;
+    align-items:flex-start;
+}
+#home::before{
+    content: "";
+    position:absolute;
+    
+    background: url('../img/bg.png') no-repeat center center/cover;
+    
+    height: 50%;
+    width: 100%;
+    z-index: -1;
+    opacity: 0.89 ;
+} */
+
+.background{
+    background: url('../img/bg.png');
+    height: 600px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    
+}
+#home{
+    padding: 3px 200px;
+    height: 89%;
+}
+
+
+#home p{
+    font-size: 1.9rem;
+    padding: 10px;
+    margin-top: -96px;
+    color:  #a2443e;
+    font-family: 'Exo 2', sans-serif;
+}
+.btn{
+    padding: 10px 40px;
+    border: 1px solid #a2443e;
+    color: #79031b;
+    background-color:#e19588;
+    margin: 7px;
+    font-size: 1.4rem ;
+    border-radius: 20px;
+    font-family: 'Exo 2', sans-serif;
+    cursor: pointer;
+}
+
+.btn:hover{
+    color: white;
+    background-color:#79031b;
+}
+/* Services */
+
+#services{
+    margin: 34px;
+    display:flex;
+    background-color:#f1d1cb;
+    justify-content: space-evenly;
+    padding-bottom: 60px;
+}
+#services .box{
+    border: 2px solid brown ;
+    padding: 38px;
+    margin: 3px 6px;
+    border-radius: 28px;
+    
+}
+#services .box img{
+    height: 241px;
+    margin: auto;
+    display: block;
+    border-radius: 176px;
+}
+.background2{
+    background-color: #f1d1cb;
+}
+
+/* Utility Classes */
+.primary{
+    font-size: 9.9rem;
+    padding: 6px;
+    margin-top: 17px;
+    font-family: 'Noto Sans Arabic', sans-serif;
+    color: #79031b;
+} 
+.h-secondary{
+    font-size: 2.8rem;
+    padding: 12px;
+    font-family: 'Exo 2', sans-serif;
+}
+.center{
+    text-align: center;
+    font-size: 2.8rem;
+}
+.h-primary{
+    font-family: 'Exo 2', sans-serif;
+    padding: 16px;
+}
